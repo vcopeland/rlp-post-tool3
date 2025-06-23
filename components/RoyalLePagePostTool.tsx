@@ -1,11 +1,4 @@
-'use client';
-
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import html2canvas from "html2canvas";
 
 const RoyalLePagePostTool = () => {
@@ -52,10 +45,10 @@ const RoyalLePagePostTool = () => {
 
     const emojis = {
       price: "💰",
-      bedrooms: "🛏️",
-      bathrooms: "🛁",
+      bedrooms: "🛌",
+      bathrooms: "🚱",
       lotSize: "🌳",
-      openHouse: "📅",
+      openHouse: "🗓️",
       house: "🏡",
       sparkle: "✨"
     };
@@ -78,8 +71,7 @@ ${openHouseInfo ? `${emojis.openHouse} Open House: ${openHouseInfo}` : ""}
 
 Contact me for more info or to book a showing!
 
-${hashtags}
-    `;
+${hashtags}`;
 
     setGeneratedText(text.trim());
   };
@@ -95,56 +87,47 @@ ${hashtags}
   };
 
   return (
-    <div className="p-6 space-y-4 max-w-4xl mx-auto text-gray-800">
-      <h1 className="text-3xl font-bold text-center text-red-700">Royal LePage RCR Realty Social Post Creator</h1>
-      <Card>
-        <CardContent className="space-y-4 p-4">
-          <Input name="address" placeholder="Address" onChange={handleInputChange} />
-          <Input name="price" placeholder="Price" onChange={handleInputChange} />
-          <Input name="bedrooms" placeholder="Number of Bedrooms" onChange={handleInputChange} />
-          <Input name="bathrooms" placeholder="Number of Bathrooms" onChange={handleInputChange} />
-          <Input name="lotSize" placeholder="Lot Size" onChange={handleInputChange} />
-          <Textarea name="listingWriteup" placeholder="Paste Listing Write-up" onChange={handleInputChange} />
-          <Textarea name="openHouseInfo" placeholder="Open House Info (optional)" onChange={handleInputChange} />
-          <Input name="agentName" placeholder="Your Name" onChange={handleInputChange} />
-          <Input name="mobileNumber" placeholder="Mobile Number" onChange={handleInputChange} />
-
-          <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, postType: value }))}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Post Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="New Listing">New Listing</SelectItem>
-              <SelectItem value="Price Improvement">Price Improvement</SelectItem>
-              <SelectItem value="Open House">Open House</SelectItem>
-              <SelectItem value="Sold">Sold</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Input type="file" accept="image/*" onChange={handleImageChange} />
-
-          <Button onClick={generateSocialText}>Generate Social Media Text</Button>
-        </CardContent>
-      </Card>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <h1 style={{ color: '#cc0000', textAlign: 'center' }}>Royal LePage RCR Realty Social Post Creator</h1>
+      <div style={{ marginBottom: '20px' }}>
+        <input name="address" placeholder="Address" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <input name="price" placeholder="Price" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <input name="bedrooms" placeholder="Number of Bedrooms" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <input name="bathrooms" placeholder="Number of Bathrooms" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <input name="lotSize" placeholder="Lot Size" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <textarea name="listingWriteup" placeholder="Paste Listing Write-up" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <textarea name="openHouseInfo" placeholder="Open House Info (optional)" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <input name="agentName" placeholder="Your Name" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <input name="mobileNumber" placeholder="Mobile Number" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
+        <select name="postType" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }}>
+          <option value="New Listing">New Listing</option>
+          <option value="Price Improvement">Price Improvement</option>
+          <option value="Open House">Open House</option>
+          <option value="Sold">Sold</option>
+        </select>
+        <input type="file" accept="image/*" onChange={handleImageChange} style={{ marginBottom: '12px' }} />
+        <button onClick={generateSocialText}>Generate Social Media Text</button>
+      </div>
 
       {generatedText && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-gray-800">Generated Post</h2>
-          <Textarea value={generatedText} readOnly rows={10} />
-          <div id="post-image" className="relative w-full max-w-xl mx-auto h-96 rounded-xl overflow-hidden shadow-lg border border-gray-300">
-            {formData.image && <img src={formData.image} alt="Home" className="w-full h-full object-cover" />}
-            <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-40 text-white p-4 flex flex-col justify-between">
-              <div className="text-2xl font-bold">{formData.postType}</div>
-              <div className="text-center">
-                <div className="text-lg font-semibold">{formData.address}</div>
-                <div className="text-md">💰 {formData.price}</div>
-                <div className="text-sm">🛏️ {formData.bedrooms} | 🛁 {formData.bathrooms} | 🌳 {formData.lotSize}</div>
+        <div style={{ marginTop: '20px' }}>
+          <h2>Generated Post</h2>
+          <textarea value={generatedText} readOnly rows={10} style={{ width: '100%' }} />
+
+          <div id="post-image" style={{ position: 'relative', width: '100%', maxWidth: '600px', height: '400px', margin: '20px auto', borderRadius: '16px', overflow: 'hidden', border: '1px solid #ccc' }}>
+            {formData.image && <img src={formData.image} alt="Home" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', color: 'white', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{formData.postType}</div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '18px', fontWeight: '600' }}>{formData.address}</div>
+                <div style={{ fontSize: '16px' }}>💰 {formData.price}</div>
+                <div style={{ fontSize: '14px' }}>🛌 {formData.bedrooms} | 🚱 {formData.bathrooms} | 🌳 {formData.lotSize}</div>
               </div>
-              <div className="text-sm text-right">{formData.agentName} • {formData.mobileNumber}</div>
+              <div style={{ fontSize: '14px', textAlign: 'right' }}>{formData.agentName} • {formData.mobileNumber}</div>
             </div>
-            <img src="/rcr-logo.jpg" className="absolute bottom-4 right-4 w-20" alt="RCR Logo" />
+            <img src="/rcr-logo.jpg" style={{ position: 'absolute', bottom: '8px', right: '8px', width: '80px' }} alt="RCR Logo" />
           </div>
-          <Button onClick={downloadImage}>Download Image</Button>
+          <button onClick={downloadImage}>Download Image</button>
         </div>
       )}
     </div>
