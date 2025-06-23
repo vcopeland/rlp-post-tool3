@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import html2canvas from "html2canvas";
 
@@ -13,48 +14,46 @@ const RoyalLePagePostTool = () => {
     postType: "New Listing",
     agentName: "",
     mobileNumber: "",
-    image: null
+    image: null as string | null,
   });
 
   const [generatedText, setGeneratedText] = useState("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({ ...prev, image: reader.result }));
-    };
-    reader.readAsDataURL(file);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const summarizeWriteup = (writeup) => {
+  const summarizeWriteup = (writeup: string) => {
     let summary = writeup.split(".")[0];
-    if (summary.length > 160) {
-      summary = summary.slice(0, 157) + "...";
-    }
+    if (summary.length > 160) summary = summary.slice(0, 157) + "...";
     return summary.trim();
   };
 
   const generateSocialText = () => {
     const { address, price, bedrooms, bathrooms, lotSize, listingWriteup, openHouseInfo, postType } = formData;
-
     const emojis = {
       price: "💰",
-      bedrooms: "🛌",
-      bathrooms: "🚱",
+      bedrooms: "🛏️",
+      bathrooms: "🛁",
       lotSize: "🌳",
-      openHouse: "🗓️",
+      openHouse: "📅",
       house: "🏡",
       sparkle: "✨"
     };
 
     const hashtags = "#RoyalLePage #NewListing #DreamHome #HouseGoals #RealEstateCanada";
-
     const summary = summarizeWriteup(listingWriteup);
 
     const text = `
@@ -71,63 +70,94 @@ ${openHouseInfo ? `${emojis.openHouse} Open House: ${openHouseInfo}` : ""}
 
 Contact me for more info or to book a showing!
 
-${hashtags}`;
+${hashtags}`.trim();
 
-    setGeneratedText(text.trim());
+    setGeneratedText(text);
   };
 
   const downloadImage = () => {
     const element = document.getElementById("post-image");
-    html2canvas(element).then((canvas) => {
-      const link = document.createElement("a");
-      link.download = "rlp_social_post.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
+    if (element) {
+      html2canvas(element).then((canvas) => {
+        const link = document.createElement("a");
+        link.download = "rlp_social_post.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h1 style={{ color: '#cc0000', textAlign: 'center' }}>Royal LePage RCR Realty Social Post Creator</h1>
-      <div style={{ marginBottom: '20px' }}>
-        <input name="address" placeholder="Address" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <input name="price" placeholder="Price" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <input name="bedrooms" placeholder="Number of Bedrooms" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <input name="bathrooms" placeholder="Number of Bathrooms" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <input name="lotSize" placeholder="Lot Size" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <textarea name="listingWriteup" placeholder="Paste Listing Write-up" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <textarea name="openHouseInfo" placeholder="Open House Info (optional)" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <input name="agentName" placeholder="Your Name" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <input name="mobileNumber" placeholder="Mobile Number" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }} />
-        <select name="postType" onChange={handleInputChange} style={{ width: '100%', marginBottom: '8px' }}>
+    <div style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
+      <h1 style={{ textAlign: "center", color: "#cc0000", fontSize: 28, fontWeight: "bold" }}>
+        Royal LePage RCR Realty Social Post Creator
+      </h1>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 20 }}>
+        <input name="address" placeholder="Address" onChange={handleInputChange} />
+        <input name="price" placeholder="Price" onChange={handleInputChange} />
+        <input name="bedrooms" placeholder="Number of Bedrooms" onChange={handleInputChange} />
+        <input name="bathrooms" placeholder="Number of Bathrooms" onChange={handleInputChange} />
+        <input name="lotSize" placeholder="Lot Size" onChange={handleInputChange} />
+        <textarea name="listingWriteup" placeholder="Paste Listing Write-up" onChange={handleInputChange} />
+        <textarea name="openHouseInfo" placeholder="Open House Info (optional)" onChange={handleInputChange} />
+        <input name="agentName" placeholder="Your Name" onChange={handleInputChange} />
+        <input name="mobileNumber" placeholder="Mobile Number" onChange={handleInputChange} />
+        <select name="postType" onChange={handleInputChange}>
           <option value="New Listing">New Listing</option>
           <option value="Price Improvement">Price Improvement</option>
           <option value="Open House">Open House</option>
           <option value="Sold">Sold</option>
         </select>
-        <input type="file" accept="image/*" onChange={handleImageChange} style={{ marginBottom: '12px' }} />
+        <input type="file" accept="image/*" onChange={handleImageChange} />
         <button onClick={generateSocialText}>Generate Social Media Text</button>
       </div>
 
       {generatedText && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>Generated Post</h2>
-          <textarea value={generatedText} readOnly rows={10} style={{ width: '100%' }} />
+        <div style={{ marginTop: 40 }}>
+          <h2>Generated Post:</h2>
+          <textarea readOnly rows={10} style={{ width: "100%" }} value={generatedText} />
 
-          <div id="post-image" style={{ position: 'relative', width: '100%', maxWidth: '600px', height: '400px', margin: '20px auto', borderRadius: '16px', overflow: 'hidden', border: '1px solid #ccc' }}>
-            {formData.image && <img src={formData.image} alt="Home" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', color: 'white', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{formData.postType}</div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '18px', fontWeight: '600' }}>{formData.address}</div>
-                <div style={{ fontSize: '16px' }}>💰 {formData.price}</div>
-                <div style={{ fontSize: '14px' }}>🛌 {formData.bedrooms} | 🚱 {formData.bathrooms} | 🌳 {formData.lotSize}</div>
+          <div id="post-image" style={{
+            position: "relative",
+            marginTop: 20,
+            width: "100%",
+            height: 400,
+            overflow: "hidden",
+            borderRadius: 16,
+            border: "1px solid #ccc"
+          }}>
+            {formData.image && (
+              <img src={formData.image} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            )}
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0,0,0,0.4)",
+              color: "#fff",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              padding: 16
+            }}>
+              <div style={{ fontSize: 24, fontWeight: "bold" }}>{formData.postType}</div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 18 }}>{formData.address}</div>
+                <div style={{ fontSize: 16 }}>💰 {formData.price}</div>
+                <div style={{ fontSize: 14 }}>🛏️ {formData.bedrooms} | 🛁 {formData.bathrooms} | 🌳 {formData.lotSize}</div>
               </div>
-              <div style={{ fontSize: '14px', textAlign: 'right' }}>{formData.agentName} • {formData.mobileNumber}</div>
+              <div style={{ fontSize: 12, textAlign: "right" }}>
+                {formData.agentName} • {formData.mobileNumber}
+              </div>
             </div>
-            <img src="/rcr-logo.jpg" style={{ position: 'absolute', bottom: '8px', right: '8px', width: '80px' }} alt="RCR Logo" />
+            {/* Optional: Replace with uploaded logo if hosted */}
+            {/* <img src="/your-logo-path.jpg" style={{ position: 'absolute', bottom: 16, right: 16, width: 80 }} /> */}
           </div>
-          <button onClick={downloadImage}>Download Image</button>
+
+          <button onClick={downloadImage} style={{ marginTop: 10 }}>Download Image</button>
         </div>
       )}
     </div>
