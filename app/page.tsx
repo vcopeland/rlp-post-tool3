@@ -1,7 +1,9 @@
-'use client';
-
-import RoyalLePagePostTool from "../components/RoyalLePagePostTool";
+import RoyalLePagePostTool from "@/components/RoyalLePagePostTool";
 
 export default function Home() {
-  return <RoyalLePagePostTool />;
+  return (
+    <main className="p-8 max-w-4xl mx-auto">
+      <RoyalLePagePostTool />
+    </main>
+  );
 }
